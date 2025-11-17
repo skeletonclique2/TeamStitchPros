@@ -1,0 +1,44 @@
+name: Next.js Auto-Deploy to Namecheap
+
+on:
+  push:
+    branches:
+      - main  # triggers on main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # 3. Install dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # 4. Build Next.js site
+      - name: Build Next.js
+        run: npm run build
+
+      # 5. Export static files
+      - name: Export Static Output
+        run: npx next export
+
+      # 6. Deploy to Namecheap via SFTP
+      - name: Deploy via SFTP
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SFTP_HOST }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          key: ${{ secrets.SFTP_PRIVATE_KEY }}
+          port: 22
+          source: "out/*"
+          target: "/home/yourcpanelusername/public_html/"
