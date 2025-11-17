@@ -1,6 +1,5 @@
 name: Deploy Next.js to Namecheap
 
-# Trigger workflow on push to main branch
 on:
   push:
     branches:
@@ -11,34 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout repository
+      # 1. Checkout repository
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: ${{ secrets.NODE_VERSION }}
 
-      # Step 3: Install dependencies
+      # 3. Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Build the Next.js project
+      # 4. Build Next.js project
       - name: Build Next.js project
         run: npm run build
 
-      # Step 5: Export static site
+      # 5. Export static site (Next.js output: 'export')
       - name: Export static site
-        run: |
-          # Make sure next.config.mjs has `output: 'export'`
-          npm run build
-          echo "Static export completed. Output folder: ./out"
+        run: npm run build
 
-      # Step 6: Deploy to Namecheap via SFTP
+      # 6. Deploy via SFTP
       - name: Deploy via SFTP
-        uses: SamKirkland/FTP-Deploy-Action@v4
+        uses: SamKirkland/FTP-Deploy-Action@v3
         with:
           server: ${{ secrets.SFTP_HOST }}
           username: ${{ secrets.SFTP_USERNAME }}
