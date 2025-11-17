@@ -10,29 +10,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v3
 
-      # 2️⃣ Setup Node.js
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ secrets.NODE_VERSION }}
 
-      # 3️⃣ Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # 4️⃣ Build Next.js project
-      - name: Build Next.js project
+      - name: Build
         run: npm run build
 
-      # 5️⃣ Export static site (Next.js must have output: 'export' in next.config.mjs)
-      - name: Prepare static export
-        run: echo "Static site should be in ./out/ after build"
-
-      # 6️⃣ Deploy to Namecheap via SFTP
       - name: Deploy via SFTP
         uses: appleboy/scp-action@master
         with:
@@ -42,4 +33,4 @@ jobs:
           port: ${{ secrets.SFTP_PORT }}
           source: "./out/*"
           target: "/public_html/"
-          rm: true # removes remote files before copying
+          rm: true
